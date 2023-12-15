@@ -1,5 +1,13 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect } from "react";
+import { useState } from "react";
 import { initializeApp } from "firebase/app";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+  onAuthStateChanged,} from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAErNyit_f93Wk2VwHOvKa1aKL2YbeJKpE",
@@ -10,10 +18,51 @@ const firebaseConfig = {
   appId: "1:956036970431:web:34e1527cd6adcb6efb930a",
 };
 
+
+
 const firebaseApp = initializeApp(firebaseConfig);
-const FirebaseContaxt = createContext(null); 
- export const useFirebase = () => useContext(FirebaseContaxt);
+const firebaseAuth = getAuth(firebaseApp);
+const FirebaseContaxt = createContext(null);
+const googleProvider = new GoogleAuthProvider();
+export const useFirebase = () => useContext(FirebaseContaxt);
 
 export const FirebaseProvider = (props) => {
-  return <FirebaseContaxt.Provider>{props.children}</FirebaseContaxt.Provider>;
+  const [user, setuser] = useState(null);
+
+  useEffect(() => {
+
+    onAuthStateChanged(firebaseAuth, (user) => {
+      if (user) setuser(user);
+      else setuser(null);
+    });
+  }, []);
+//Function Zone
+  const createUsersWithEmailAndPassword = (email, password) => {
+    createUserWithEmailAndPassword(firebaseAuth, email, password);
+  };
+  const signInUserWithEmailAndPassword = (email, password) => {
+    signInWithEmailAndPassword(firebaseAuth, email, password);
+  };
+
+  const signInWithGoogle = () => {
+    signInWithPopup(firebaseAuth, googleProvider);
+  };
+
+  //
+  const isLoggedin = user ? true : false;
+
+//Function crreate korar por must valuer moddhe pass kortei hobe ,tokhn seta use
+//firebase moddhe paua jabe (const firebase = 'useFirebase', firebase.functionN)
+  return (
+    <FirebaseContaxt.Provider
+      value={{
+        createUsersWithEmailAndPassword,
+        signInUserWithEmailAndPassword,
+        signInWithGoogle,
+        isLoggedin,
+      }}
+    >
+      {props.children}
+    </FirebaseContaxt.Provider>
+  );
 };

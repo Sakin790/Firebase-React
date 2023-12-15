@@ -1,14 +1,18 @@
-import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./App.css";
 import { Route, Routes } from "react-router-dom";
-import Navbars from "./Pages/Navbar";
+import Login from "./Pages/Login";
+import SignUp from "./Pages/SignUp";
+import MyNavbar from "./components/MyNavbar"
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Navbars />} />
-      <Route path="/login" element={<h1>LOGIN</h1>} />
-      <Route path="/signin" element={<h1>SIGN IN</h1>} />
-    </Routes>
+    <div>
+      <Routes>
+        <Route path="/" element={<MyNavbar/>} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+      </Routes>
+    </div>
   );
 }
 
